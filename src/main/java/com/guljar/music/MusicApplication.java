@@ -13,8 +13,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 public class MusicApplication {
 
     public static void main(String[] args) {
-        // Load environment variables from .env file
-        EnvLoader.loadEnvVariables();
+        com.guljar.music.utils.EnvLoader.loadEnvVariables();
         SpringApplication.run(MusicApplication.class, args);
     }
 
