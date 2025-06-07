@@ -29,6 +29,18 @@ public class EmailService {
 
     }
 
+    public void sendContactEmail(String fromName, String fromEmail, String messageBody) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo("guljarhussain7865@email.com");
+        message.setSubject("New Contact Message from: " + fromName);
+        message.setText("Sender: " + fromName + " (" + fromEmail + ")\n\nMessage:\n" + messageBody);
 
+        try {
+            javaMailSender.send(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error sending contact email: " + e.getMessage());
+        }
+    }
 
 }

@@ -8,7 +8,11 @@ public class EnvLoader {
         Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
 
         dotenv.entries().forEach((entry) -> {
-            System.setProperty(entry.getKey(), entry.getValue());
+            String key = entry.getKey();
+            // Use existing system env variable if present, otherwise fallback to .env
+            if (System.getenv(key) == null && System.getProperty(key) == null) {
+                System.setProperty(key, entry.getValue());
+            }
         });
     }
 }

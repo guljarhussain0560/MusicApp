@@ -10,11 +10,15 @@ public class EnvLoader {
                 .load();
 
         dotenv.entries().forEach(entry -> {
-            if (System.getProperty(entry.getKey()) == null) {
-                System.setProperty(entry.getKey(), entry.getValue());
+            String key = entry.getKey();
+            String value = entry.getValue();
+
+            // Only set if not already set by system or Elastic Beanstalk env
+            if (System.getenv(key) == null && System.getProperty(key) == null) {
+                System.setProperty(key, value);
             }
         });
 
-        System.out.println(" .env variables loaded.");
+        System.out.println(".env variables loaded (only where not already defined).");
     }
 }

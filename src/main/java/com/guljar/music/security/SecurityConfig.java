@@ -22,12 +22,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
+
+    @Value("${frontend.url}")
+    private String frontendUrl;
 
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
@@ -44,7 +50,8 @@ public class SecurityConfig {
                         .ignoringRequestMatchers("/api/auth/public/**")
                         .ignoringRequestMatchers("/api/auth/oauth2/redirect")
                         .ignoringRequestMatchers("/api/auth/logout")
-                        //.ignoringRequestMatchers("/api/image/process")
+                        .ignoringRequestMatchers("/api/image/process")
+                        .ignoringRequestMatchers("/", "/login/**", "/oauth2/**", "/favicon.ico")
                         .ignoringRequestMatchers("/api/auth/me")
                         .ignoringRequestMatchers("/api/auth/public/signup")
                         .ignoringRequestMatchers("/api/auth/public/forgot-password")
@@ -54,6 +61,7 @@ public class SecurityConfig {
                         -> requests
                         .requestMatchers("/public/**").permitAll()
                         .requestMatchers("/api/csrf-token").permitAll()
+                        .requestMatchers("/", "/login/**", "/oauth2/**", "/favicon.ico").permitAll()
                         .requestMatchers("/api/auth/me").permitAll()
                         .requestMatchers("/api/auth/public/**").permitAll()
                         .requestMatchers("/api/auth/public/forgot-password").permitAll()
