@@ -1,5 +1,7 @@
 package com.guljar.music.controller;
 
+import com.guljar.music.dto.ImageAnalysisResult;
+import com.guljar.music.dto.MusicRecommendationResponse;
 import com.guljar.music.dto.Song;
 import com.guljar.music.model.User;
 import com.guljar.music.processor.ImageProcessor;
@@ -36,21 +38,21 @@ public class ImageProcessingController {
             User user = userRepository.findByUserName(username)
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
-            //Process image to generate keyword
-            String keyword = imageProcessor.process(image,user);
+            //Process image to generate structured analysis (mood, genre, search queries)
+            ImageAnalysisResult analysis = imageProcessor.process(image, user);
 
-            if(keyword == null || keyword.isEmpty()){
-                return ResponseEntity.badRequest().body("Failed To Generate Keyword \n");
+            if(analysis == null || analysis.getSearchQueries() == null || analysis.getSearchQueries().isEmpty()){
+                return ResponseEntity.badRequest().body("Failed to analyze image for music recommendations");
             }
 
-            //Search for songs using the generated keyword
-            List<Song> songs = musicSearchService.searchSongs(keyword);
+            //Search for songs using the AI-generated optimized queries
+            List<Song> songs = musicSearchService.searchSongs(analysis);
 
             if(songs.isEmpty()){
-                return ResponseEntity.ok("No songs found for the keyword: " + keyword);
+                return ResponseEntity.ok(new MusicRecommendationResponse(analysis, songs, 0));
             }
 
-            return ResponseEntity.ok(songs);
+            return ResponseEntity.ok(new MusicRecommendationResponse(analysis, songs, songs.size()));
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Error processing image: " + e.getMessage());
@@ -61,5 +63,3 @@ public class ImageProcessingController {
 
     }
 }
-
-
