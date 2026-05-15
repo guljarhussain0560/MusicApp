@@ -9,4 +9,8 @@ import java.util.List;
 @Repository
 public interface SearchKeywordRepository extends JpaRepository<SearchKeyword, Long> {
     List<SearchKeyword> findByUser(User user);
+
+    /** Get the most recent search keywords for a user (for personalization) */
+    List<SearchKeyword> findTop10ByUserOrderByCreatedAtDesc(User user);
 }
+
